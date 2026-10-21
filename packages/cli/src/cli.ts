@@ -3,10 +3,12 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { render } from 'ink';
+import { createElement } from 'react';
 import { registerWalletCommands } from './commands/wallet.js';
 import { registerStreamCommands } from './commands/stream.js';
 import { registerProfileCommands } from './commands/profile.js';
 import { registerCompletionCommands } from './commands/completion.js';
+import { registerMultisigCommands } from './commands/multisig.js';
 import StreamTui from './tui/stream-tui.js';
 
 const program = new Command();
@@ -26,6 +28,7 @@ registerWalletCommands(program);
 registerStreamCommands(program);
 registerProfileCommands(program);
 registerCompletionCommands(program);
+registerMultisigCommands(program);
 
 // Health check command
 program
@@ -52,7 +55,7 @@ program
   .command('tui')
   .description('Launch interactive Terminal UI (TUI) dashboard')
   .action(() => {
-    render(<StreamTui />);
+    render(createElement(StreamTui));
   });
 
 // Error handling
