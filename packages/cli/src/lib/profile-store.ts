@@ -26,6 +26,7 @@ import {
   ProfileError,
   isValidProfileName,
 } from './profile-types.js';
+import { ConfigValidator } from './config-validator.js';
 import {
   sealVault,
   sealArgon2Vault,

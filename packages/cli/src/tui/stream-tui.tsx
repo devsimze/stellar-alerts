@@ -1,11 +1,22 @@
 #!/usr/bin/env tsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { render, Text, Box, Newline, useInput, useApp } from 'ink';
-import Table from 'ink-table';
+import InkTable from 'ink-table';
+
+/**
+ * ink-table v3 ships a default export at runtime but does not declare it in
+ * its type definitions, so the import cannot be used as a JSX component
+ * without a cast.
+ */
+const Table = InkTable as unknown as React.FC<{
+  data: Array<Record<string, string | number | boolean | null | undefined>>;
+  padding?: number;
+}>;
 import { PaymentDTO } from '../lib/types.js';
 
 export interface StreamTuiProps {
   dispatch?: (action: StreamTuiAction) => void;
+  onPayment?: (payment: PaymentDTO) => void;
   onQuit?: () => void;
   initialPaused?: boolean;
 }
@@ -26,8 +37,6 @@ export type StreamTuiAction =
   | { type: 'CLEAR' }
   | { type: 'SET_CONNECTION_STATUS'; payload: 'connected' | 'disconnected' | 'connecting' }
   | { type: 'QUIT' };
-
-export { streamTuiReducer };
 
 export function streamTuiReducer(
   state: StreamTuiState,
@@ -128,7 +137,7 @@ const StreamTui: React.FC<StreamTuiProps> = ({
   // Calculate transaction volume metrics
   const volumeMetrics = useMemo(() => {
     const totalAmount = state.payments.reduce((sum, p) => {
-      const amount = parseFloat(p.amount);
+      const amount = parseFloat(String(p.amount));
       return isNaN(amount) ? sum : sum + amount;
     }, 0);
 
